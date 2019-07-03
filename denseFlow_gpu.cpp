@@ -6,6 +6,7 @@
 
 #include <stdio.h>
 #include <iostream>
+#include <string>
 
 using namespace std;
 using namespace cv;
@@ -48,21 +49,22 @@ int main(int argc, char** argv){
 			"{ t  | type       | 1       | specify the optical flow algorithm }"
 			"{ d  | device_id  | 0       | specify gpu id }"
 			"{ s  | step       | 1       | specify the step for frame sampling }"
-                        "{ h  | height     | 0       | specify the height of saved flows, 0: keep original height }"
-                        "{ w  | width      | 0       | specify the width of saved flows,  0: keep original width }"    
+            "{ h  | height     | 0       | specify the height of saved flows, 0: keep original height }"
+            "{ w  | width      | 0       | specify the width of saved flows,  0: keep original width }"
 		};
 
 	CommandLineParser cmd(argc, argv, keys);
-	string vidFile = cmd.get<string>("vidFile");
-	string xFlowFile = cmd.get<string>("xFlowFile");
-	string yFlowFile = cmd.get<string>("yFlowFile");
-	string imgFile = cmd.get<string>("imgFile");
-	int bound = cmd.get<int>("bound");
-        int type  = cmd.get<int>("type");
-        int device_id = cmd.get<int>("device_id");
-        int step = cmd.get<int>("step");
-        int height = cmd.get<int>("height");
-        int width = cmd.get<int>("width");
+
+	string vidFile = cmd.get<string>("f");
+	string xFlowFile = cmd.get<string>("x");
+	string yFlowFile = cmd.get<string>("y");
+	string imgFile = cmd.get<string>("i");
+	int bound = cmd.get<int>("b");
+	int type  = cmd.get<int>("t");
+	int device_id = cmd.get<int>("d");
+	int step = cmd.get<int>("s");
+	int height = cmd.get<int>("h");
+	int width = cmd.get<int>("w");
 
 	VideoCapture capture(vidFile);
 	if(!capture.isOpened()) {
