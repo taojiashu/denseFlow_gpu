@@ -1,12 +1,15 @@
+#include "opencv2/core/cuda.hpp"
 #include "opencv2/video/tracking.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/highgui/highgui.hpp"
-#include "opencv2/gpu/gpu.hpp"
+#include "opencv2/cudaoptflow.hpp"
 
 #include <stdio.h>
 #include <iostream>
+
+using namespace std;
 using namespace cv;
-using namespace cv::gpu;
+using namespace cv::cuda;
 
 static void convertFlowToImage(const Mat &flow_x, const Mat &flow_y, Mat &img_x, Mat &img_y,
        double lowerBound, double higherBound) {
@@ -72,9 +75,9 @@ int main(int argc, char** argv){
 	GpuMat frame_0, frame_1, flow_u, flow_v;
 
 	setDevice(device_id);
-	FarnebackOpticalFlow alg_farn;
-	OpticalFlowDual_TVL1_GPU alg_tvl1;
-	BroxOpticalFlow alg_brox(0.197f, 50.0f, 0.8f, 10, 77, 10);
+	Ptr<FarnebackOpticalFlow> alg_farn = FarnebackOpticalFlow::create();
+	Ptr<OpticalFlowDual_TVL1_GPU> alg_tvl1 = OpticalFlowDual_TVL1::create();
+	Ptr<BroxOpticalFlow> alg_brox = BroxOpticalFlow::create(0.197f, 50.0f, 0.8f, 10, 77, 10);
 
 	while(true) {
 		capture >> frame;
