@@ -71,12 +71,12 @@ int main(int argc, char** argv){
 	}
 
 	int frame_num = 0;
-	Mat image, prev_image, prev_grey, grey, frame, flow_x, flow_y;
-	GpuMat frame_0, frame_1, flow_u, flow_v;
+	Mat image, prev_image, prev_grey, grey, frame, flow_x, flow_y, flow_cpu, planes[3];
+	GpuMat frame_0, frame_1, flow_u, flow_v, flow_gpu;
 
 	setDevice(device_id);
-	cv::Ptr<cv::cuda::FarnebackOpticalFlow> alg_farn;
-	cv::Ptr<cv::cuda::OpticalFlowDual_TVL1> alg_tvl1;
+	cv::Ptr<cv::cuda::FarnebackOpticalFlow> alg_farn = cv::cuda::FarnebackOpticalFlow::create();
+	cv::Ptr<cv::cuda::OpticalFlowDual_TVL1> alg_tvl1 = cv::cuda::OpticalFlowDual_TVL1::create();
 	cv::Ptr<cv::cuda::BroxOpticalFlow> alg_brox = cv::cuda::BroxOpticalFlow::create(0.197f, 50.0f, 0.8f, 10, 77, 10);
 
 	while(true) {
@@ -113,21 +113,23 @@ int main(int argc, char** argv){
                 // GPU optical flow
 		switch(type){
 		case 0:
-            alg_farn = cv::cuda::FarnebackOpticalFlow::create(frame_0,frame_1,flow_u,flow_v);
+			alg_farn->calc(frame_0,frame_1,flow_gpu);
 			break;
 		case 1:
-            alg_tvl1 = cv::cuda::OpticalFlowDual_TVL1::create(frame_0,frame_1,flow_u,flow_v);
+			alg_tvl1->calc(frame_0,frame_1,flow_gpu);
 			break;
 		case 2:
 			GpuMat d_frame0f, d_frame1f;
-	                frame_0.convertTo(d_frame0f, CV_32F, 1.0 / 255.0);
-	                frame_1.convertTo(d_frame1f, CV_32F, 1.0 / 255.0);
-			alg_brox(d_frame0f, d_frame1f, flow_u,flow_v);
+			frame_0.convertTo(d_frame0f, CV_32F, 1.0 / 255.0);
+			frame_1.convertTo(d_frame1f, CV_32F, 1.0 / 255.0);
+			alg_brox->(d_frame0f, d_frame1f, flow_gpu);
 			break;
 		}
 
-		flow_u.download(flow_x);
-		flow_v.download(flow_y);
+		flow_gpu.download(flow_cpu);
+		cv::split(flow_cpu, planes)
+		flow_u = planes[0];
+		flow_v = planes[1];
 
 		// Output optical flow
 		Mat imgX(flow_x.size(),CV_8UC1);
