@@ -122,12 +122,12 @@ int main(int argc, char** argv){
 			GpuMat d_frame0f, d_frame1f;
 			frame_0.convertTo(d_frame0f, CV_32F, 1.0 / 255.0);
 			frame_1.convertTo(d_frame1f, CV_32F, 1.0 / 255.0);
-			alg_brox->(d_frame0f, d_frame1f, flow_gpu);
+			alg_brox->calc(d_frame0f, d_frame1f, flow_gpu);
 			break;
 		}
 
 		flow_gpu.download(flow_cpu);
-		cv::split(flow_cpu, planes)
+		cv::split(flow_cpu, planes);
 		flow_x = planes[0];
 		flow_y = planes[1];
 
