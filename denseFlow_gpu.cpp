@@ -75,9 +75,9 @@ int main(int argc, char** argv){
 	GpuMat frame_0, frame_1, flow_u, flow_v;
 
 	setDevice(device_id);
-	Ptr<FarnebackOpticalFlow> alg_farn = FarnebackOpticalFlow::create();
-	Ptr<OpticalFlowDual_TVL1_GPU> alg_tvl1 = OpticalFlowDual_TVL1::create();
-	Ptr<BroxOpticalFlow> alg_brox = BroxOpticalFlow::create(0.197f, 50.0f, 0.8f, 10, 77, 10);
+	cv::Ptr<cv::cuda::FarnebackOpticalFlow> alg_farn;
+	cv::Ptr<cv::cuda::OpticalFlowDual_TVL1> alg_tvl1;
+	cv::Ptr<cv::cuda::BroxOpticalFlow> alg_brox = cv::cuda::BroxOpticalFlow::create(0.197f, 50.0f, 0.8f, 10, 77, 10);
 
 	while(true) {
 		capture >> frame;
@@ -113,10 +113,10 @@ int main(int argc, char** argv){
                 // GPU optical flow
 		switch(type){
 		case 0:
-			alg_farn(frame_0,frame_1,flow_u,flow_v);
+            alg_farn = cv::cuda::FarnebackOpticalFlow::create(frame_0,frame_1,flow_u,flow_v);
 			break;
 		case 1:
-			alg_tvl1(frame_0,frame_1,flow_u,flow_v);
+            alg_tvl1 = cv::cuda::OpticalFlowDual_TVL1::create(frame_0,frame_1,flow_u,flow_v);
 			break;
 		case 2:
 			GpuMat d_frame0f, d_frame1f;
