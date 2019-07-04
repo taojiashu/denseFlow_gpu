@@ -118,7 +118,7 @@ int main(int argc, char** argv){
 		frame_1.upload(grey);
 
 
-                // GPU optical flow
+		// GPU optical flow
 		switch(type){
 		case 0:
             alg_farn->calc(frame_0,frame_1,flow_gpu);
@@ -144,7 +144,7 @@ int main(int argc, char** argv){
 		Mat imgY(flow_y.size(),CV_8UC1);
 		convertFlowToImage(flow_x,flow_y, imgX, imgY, -bound, bound);
 		char tmp[20];
-		sprintf(tmp,"_%06d.jpg",int(frame_num));
+		sprintf(tmp,"%06d.jpg",int(frame_num));
 
 		Mat imgX_, imgY_, image_;
                 height = (height > 0)? height : imgX.rows;
